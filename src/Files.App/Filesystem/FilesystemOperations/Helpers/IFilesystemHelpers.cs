@@ -18,8 +18,7 @@ namespace Files.App.Filesystem
 		/// <returns><see cref="ReturnResult"/> of performed operation</returns>
 		Task<(ReturnResult, IStorageItem)> CreateAsync(IStorageItemWithPath source, bool registerHistory);
 
-		#region Delete
-
+		
 		/// <summary>
 		/// Deletes provided <paramref name="source"/>
 		/// </summary>
@@ -60,10 +59,8 @@ namespace Files.App.Filesystem
 		/// <returns><see cref="ReturnResult"/> of performed operation</returns>
 		Task<ReturnResult> DeleteItemAsync(IStorageItemWithPath source, bool showDialog, bool permanently, bool registerHistory);
 
-		#endregion Delete
-
-		#region Restore
-
+		
+		
 		/// <summary>
 		/// Restores <paramref name="source"/> from the RecycleBin to <paramref name="destination"/> fullPath
 		/// </summary>
@@ -100,8 +97,7 @@ namespace Files.App.Filesystem
 		/// <returns><see cref="ReturnResult"/> of performed operation</returns>
 		Task<ReturnResult> RestoreItemsFromTrashAsync(IEnumerable<IStorageItemWithPath> source, IEnumerable<string> destination, bool registerHistory);
 
-		#endregion Restore
-
+		
 		/// <summary>
 		/// Performs relevant operation based on <paramref name="operation"/>
 		/// </summary>
@@ -118,8 +114,7 @@ namespace Files.App.Filesystem
 		/// <returns><see cref="ReturnResult"/> of performed operation</returns>
 		Task<ReturnResult> PerformOperationTypeAsync(DataPackageOperation operation, DataPackageView packageView, string destination, bool showDialog, bool registerHistory, bool isDestinationExecutable = false);
 
-		#region Copy
-
+		
 		/// <summary>
 		/// Copies <paramref name="source"/> to <paramref name="destination"/> fullPath
 		/// </summary>
@@ -179,10 +174,8 @@ namespace Files.App.Filesystem
 
 		Task<ReturnResult> CreateShortcutFromClipboard(DataPackageView packageView, string destination, bool showDialog, bool registerHistory);
 
-		#endregion Copy
-
-		#region Move
-
+		
+		
 		/// <summary>
 		/// Moves <paramref name="source"/> to <paramref name="destination"/> fullPath
 		/// </summary>
@@ -238,8 +231,7 @@ namespace Files.App.Filesystem
 		/// <returns><see cref="ReturnResult"/> of performed operation</returns>
 		Task<ReturnResult> MoveItemsFromClipboard(DataPackageView packageView, string destination, bool showDialog, bool registerHistory);
 
-		#endregion Move
-
+		
 		/// <summary>
 		/// Renames <paramref name="source"/> with <paramref name="newName"/>
 		/// </summary>

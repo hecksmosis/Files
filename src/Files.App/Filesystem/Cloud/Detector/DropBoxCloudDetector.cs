@@ -18,7 +18,7 @@ namespace Files.App.Filesystem.Cloud
 
 			if (jsonElem.TryGetProperty("personal", out JsonElement inner))
 			{
-				string dropboxPath = inner.GetProperty("path").GetString();
+				string? dropboxPath = inner.GetProperty("path").GetString();
 
 				yield return new CloudProvider(CloudProviders.DropBox)
 				{
@@ -29,7 +29,7 @@ namespace Files.App.Filesystem.Cloud
 
 			if (jsonElem.TryGetProperty("business", out JsonElement innerBusiness))
 			{
-				string dropboxPath = innerBusiness.GetProperty("path").GetString();
+				string? dropboxPath = innerBusiness.GetProperty("path").GetString();
 
 				yield return new CloudProvider(CloudProviders.DropBox)
 				{

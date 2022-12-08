@@ -15,10 +15,10 @@ namespace Files.App.Filesystem.Cloud
 {
 	public class CloudDrivesManager
 	{
-		private readonly ILogger logger = Ioc.Default.GetService<ILogger>();
-		private readonly ICloudDetector detector = Ioc.Default.GetService<ICloudDetector>();
+		private readonly ILogger? logger = Ioc.Default.GetService<ILogger>();
+		private readonly ICloudDetector? detector = Ioc.Default.GetService<ICloudDetector>();
 
-		public EventHandler<NotifyCollectionChangedEventArgs> DataChanged;
+		public EventHandler<NotifyCollectionChangedEventArgs>? DataChanged;
 
 		private readonly List<DriveItem> drives = new();
 		public IReadOnlyList<DriveItem> Drives
@@ -34,7 +34,8 @@ namespace Files.App.Filesystem.Cloud
 
 		public async Task UpdateDrivesAsync()
 		{
-			var providers = await detector?.DetectCloudProvidersAsync();
+            if (detector is null) return;
+            var providers = await detector.DetectCloudProvidersAsync();
 			if (providers is null)
 			{
 				return;

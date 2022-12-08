@@ -80,10 +80,13 @@ namespace Files.App.Helpers
 			}
 		}
 
-		public static async void OpenItemsWithExecutable(IShellPage associatedInstance, IEnumerable<IStorageItemWithPath> items, string executable)
+		public static async void OpenItemsWithExecutable(IShellPage? associatedInstance, IEnumerable<IStorageItemWithPath> items, string executable)
 		{
-			// Don't open files and folders inside  recycle bin
-			if (associatedInstance.FilesystemViewModel.WorkingDirectory.StartsWith(CommonPaths.RecycleBinPath, StringComparison.Ordinal))
+            if (associatedInstance is null)
+                return;
+
+            // Don't open files and folders inside  recycle bin
+            if (associatedInstance.FilesystemViewModel.WorkingDirectory.StartsWith(CommonPaths.RecycleBinPath, StringComparison.Ordinal))
 				return;
 
 			if (associatedInstance.SlimContentPage is null)
@@ -115,11 +118,12 @@ namespace Files.App.Helpers
 		/// <param name="forceOpenInNewTab">Open folders in a new tab regardless of the "OpenFoldersInNewTab" option</param>
 		public static async Task<bool> OpenPath(string path, IShellPage? associatedInstance, FilesystemItemType? itemType = null, bool openSilent = false, bool openViaApplicationPicker = false, IEnumerable<string> selectItems = null, string args = default, bool forceOpenInNewTab = false)
 		{
-			string previousDir = associatedInstance.FilesystemViewModel.WorkingDirectory;
+			string? previousDir = associatedInstance?.FilesystemViewModel.WorkingDirectory;
 			bool isHiddenItem = NativeFileOperationsHelper.HasFileAttribute(path, System.IO.FileAttributes.Hidden);
 			bool isDirectory = NativeFileOperationsHelper.HasFileAttribute(path, System.IO.FileAttributes.Directory);
 			bool isReparsePoint = NativeFileOperationsHelper.HasFileAttribute(path, System.IO.FileAttributes.ReparsePoint);
-			bool isShortcut = associatedInstance.SlimContentPage.SelectedItem is { IsShortcut: true };
+			bool isShortcut = associatedInstance?.SlimContentPage.SelectedItem is { IsShortcut: true };
+
 			FilesystemResult opened = (FilesystemResult)false;
 
 			var shortcutInfo = new ShellLinkItem();

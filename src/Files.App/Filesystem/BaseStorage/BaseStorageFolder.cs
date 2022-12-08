@@ -17,17 +17,17 @@ namespace Files.App.Filesystem.StorageItems
 		public abstract string DisplayName { get; }
 		public abstract string DisplayType { get; }
 
-		public StorageProvider Provider => null;
+		public StorageProvider? Provider => null;
 
 		public abstract DateTimeOffset DateCreated { get; }
 		public abstract FileAttributes Attributes { get; }
 		public abstract string FolderRelativeId { get; }
 
 		public abstract IStorageItemExtraProperties Properties { get; }
-		StorageItemContentProperties IStorageItemProperties.Properties
+		StorageItemContentProperties? IStorageItemProperties.Properties
 			=> this is SystemStorageFolder folder ? folder.Folder.Properties : null;
 
-		public static implicit operator BaseStorageFolder(StorageFolder value)
+		public static implicit operator BaseStorageFolder?(StorageFolder value)
 			=> value is not null ? new SystemStorageFolder(value) : null;
 
 		public abstract IAsyncOperation<StorageFolder> ToStorageFolderAsync();
@@ -125,12 +125,12 @@ namespace Files.App.Filesystem.StorageItems
 		public abstract IAsyncOperation<StorageItemThumbnail> GetThumbnailAsync(ThumbnailMode mode, uint requestedSize);
 		public abstract IAsyncOperation<StorageItemThumbnail> GetThumbnailAsync(ThumbnailMode mode, uint requestedSize, ThumbnailOptions options);
 
-		public IAsyncOperation<StorageItemThumbnail> GetScaledImageAsThumbnailAsync(ThumbnailMode mode)
-			=> Task.FromResult<StorageItemThumbnail>(null).AsAsyncOperation();
-		public IAsyncOperation<StorageItemThumbnail> GetScaledImageAsThumbnailAsync(ThumbnailMode mode, uint requestedSize)
-			=> Task.FromResult<StorageItemThumbnail>(null).AsAsyncOperation();
-		public IAsyncOperation<StorageItemThumbnail> GetScaledImageAsThumbnailAsync(ThumbnailMode mode, uint requestedSize, ThumbnailOptions options)
-			=> Task.FromResult<StorageItemThumbnail>(null).AsAsyncOperation();
+		public IAsyncOperation<StorageItemThumbnail?> GetScaledImageAsThumbnailAsync(ThumbnailMode mode)
+			=> Task.FromResult<StorageItemThumbnail?>(null).AsAsyncOperation();
+		public IAsyncOperation<StorageItemThumbnail?> GetScaledImageAsThumbnailAsync(ThumbnailMode mode, uint requestedSize)
+			=> Task.FromResult<StorageItemThumbnail?>(null).AsAsyncOperation();
+		public IAsyncOperation<StorageItemThumbnail?> GetScaledImageAsThumbnailAsync(ThumbnailMode mode, uint requestedSize, ThumbnailOptions options)
+			=> Task.FromResult<StorageItemThumbnail?>(null).AsAsyncOperation();
 
 		public abstract bool AreQueryOptionsSupported(QueryOptions queryOptions);
 		public abstract StorageItemQueryResult CreateItemQuery();

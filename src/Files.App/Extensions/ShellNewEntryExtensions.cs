@@ -42,7 +42,7 @@ namespace Files.App.Extensions
 
 		public static async Task<FilesystemResult<BaseStorageFile>> Create(this ShellNewEntry shellEntry, BaseStorageFolder parentFolder, string filePath)
 		{
-			FilesystemResult<BaseStorageFile> createdFile = null;
+			FilesystemResult<BaseStorageFile>? createdFile = null;
 			var fileName = Path.GetFileName(filePath);
 			if (shellEntry.Template is null)
 			{
@@ -57,7 +57,8 @@ namespace Files.App.Extensions
 				shellEntry.Data is not null)
 			{
 				//await FileIO.WriteBytesAsync(createdFile.Result, shellEntry.Data); // Calls unsupported OpenTransactedWriteAsync
-				await createdFile.Result.WriteBytesAsync(shellEntry.Data);
+				if (createdFile.Result is not null)
+					await createdFile.Result.WriteBytesAsync(shellEntry.Data);
 			}
 			return createdFile;
 		}

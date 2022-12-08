@@ -13,11 +13,11 @@ namespace Files.App.Filesystem.StorageItems
 
 		public BaseBasicStorageItemExtraProperties(IStorageItem item) => this.item = item;
 
-		public override IAsyncOperation<IDictionary<string, object>> RetrievePropertiesAsync(IEnumerable<string> propertiesToRetrieve)
+		public override IAsyncOperation<IDictionary<string, object?>> RetrievePropertiesAsync(IEnumerable<string> propertiesToRetrieve)
 		{
-			return AsyncInfo.Run<IDictionary<string, object>>(async (cancellationToken) =>
+			return AsyncInfo.Run<IDictionary<string, object?>>(async (cancellationToken) =>
 			{
-				var props = new Dictionary<string, object>();
+				var props = new Dictionary<string, object?>();
 				propertiesToRetrieve.ForEach(x => props[x] = null);
 				// Fill common poperties
 				var ret = item.AsBaseStorageFile()?.GetBasicPropertiesAsync() ?? item.AsBaseStorageFolder()?.GetBasicPropertiesAsync();

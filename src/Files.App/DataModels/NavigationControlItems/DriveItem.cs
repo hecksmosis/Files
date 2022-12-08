@@ -140,7 +140,7 @@ namespace Files.App.DataModels.NavigationControlItems
 			ItemType = NavigationControlItemType.CloudDrive;
 		}
 
-		public static async Task<DriveItem> CreateFromPropertiesAsync(StorageFolder root, string deviceId, DriveType type, IRandomAccessStream imageStream = null)
+		public static async Task<DriveItem> CreateFromPropertiesAsync(StorageFolder root, string deviceId, DriveType type, IRandomAccessStream? imageStream = null)
 		{
 			var item = new DriveItem();
 

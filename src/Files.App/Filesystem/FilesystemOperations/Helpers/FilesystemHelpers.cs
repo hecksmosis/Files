@@ -24,19 +24,15 @@ namespace Files.App.Filesystem
 {
 	public class FilesystemHelpers : IFilesystemHelpers
 	{
-		#region Private Members
+		private IShellPage? associatedInstance;
 
-		private IShellPage associatedInstance;
+		private IFilesystemOperations? filesystemOperations;
 
-		private IFilesystemOperations filesystemOperations;
+		private ItemManipulationModel? itemManipulationModel => associatedInstance?.SlimContentPage?.ItemManipulationModel;
 
-		private ItemManipulationModel itemManipulationModel => associatedInstance.SlimContentPage?.ItemManipulationModel;
-
-		private RecycleBinHelpers recycleBinHelpers;
+		private RecycleBinHelpers? recycleBinHelpers;
 
 		private readonly CancellationToken cancellationToken;
-
-		#region Helpers Members
 
 		private static char[] RestrictedCharacters
 		{
@@ -60,17 +56,7 @@ namespace Files.App.Filesystem
 				"LPT6", "LPT7", "LPT8", "LPT9"
 		};
 
-		#endregion Helpers Members
-
-		#endregion Private Members
-
-		#region Properties
-
 		private IUserSettingsService UserSettingsService { get; } = Ioc.Default.GetRequiredService<IUserSettingsService>();
-
-		#endregion
-
-		#region Constructor
 
 		public FilesystemHelpers(IShellPage associatedInstance, CancellationToken cancellationToken)
 		{
@@ -79,22 +65,16 @@ namespace Files.App.Filesystem
 			this.filesystemOperations = new ShellFilesystemOperations(this.associatedInstance);
 			this.recycleBinHelpers = new RecycleBinHelpers();
 		}
-
-		#endregion Constructor
-
-		#region IFilesystemHelpers
-
-		#region Create
-
 		public async Task<(ReturnResult, IStorageItem)> CreateAsync(IStorageItemWithPath source, bool registerHistory)
 		{
 			var returnStatus = ReturnResult.InProgress;
 			var errorCode = new Progress<FileSystemStatusCode>();
 			errorCode.ProgressChanged += (s, e) => returnStatus = returnStatus < ReturnResult.Failed ? e.ToStatus() : returnStatus;
 
-			var result = await filesystemOperations.CreateAsync(source, errorCode, cancellationToken);
+			if (filesystemOperations is null) return default;
+            var result = await filesystemOperations.CreateAsync(source, errorCode, cancellationToken);
 
-			if (registerHistory && !string.IsNullOrWhiteSpace(source.Path))
+            if (registerHistory && !string.IsNullOrWhiteSpace(source.Path))
 			{
 				App.HistoryWrapper.AddHistory(result.Item1);
 			}
@@ -103,23 +83,20 @@ namespace Files.App.Filesystem
 			return (returnStatus, result.Item2);
 		}
 
-		#endregion Create
-
-		#region Delete
-
 		public async Task<ReturnResult> DeleteItemsAsync(IEnumerable<IStorageItemWithPath> source, bool showDialog, bool permanently, bool registerHistory)
 		{
 			source = await source.ToListAsync();
 
 			var returnStatus = ReturnResult.InProgress;
 
-			var deleteFromRecycleBin = source.Select(item => item.Path).Any(path => recycleBinHelpers.IsPathUnderRecycleBin(path));
+            if (recycleBinHelpers is null || filesystemOperations is null) return default;
+            var deleteFromRecycleBin = source.Select(item => item.Path).Any(path => recycleBinHelpers.IsPathUnderRecycleBin(path));
 			var canBeSentToBin = !deleteFromRecycleBin && await recycleBinHelpers.HasRecycleBin(source.FirstOrDefault()?.Path);
 
 			if (showDialog && ((!permanently && !canBeSentToBin) || UserSettingsService.PreferencesSettingsService.ShowConfirmDeleteDialog)) // Check if the setting to show a confirmation dialog is on
 			{
 				var incomingItems = new List<BaseFileSystemDialogItemViewModel>();
-				List<ShellFileItem> binItems = null;
+				List<ShellFileItem>? binItems = null;
 				foreach (var src in source)
 				{
 					if (recycleBinHelpers.IsPathUnderRecycleBin(src.Path))
@@ -193,10 +170,6 @@ namespace Files.App.Filesystem
 		public Task<ReturnResult> DeleteItemAsync(IStorageItem source, bool showDialog, bool permanently, bool registerHistory)
 			=> DeleteItemAsync(source.FromStorageItem(), showDialog, permanently, registerHistory);
 
-		#endregion Delete
-
-		#region Restore
-
 		public Task<ReturnResult> RestoreItemFromTrashAsync(IStorageItem source, string destination, bool registerHistory)
 			=> RestoreItemFromTrashAsync(source.FromStorageItem(), destination, registerHistory);
 
@@ -217,8 +190,9 @@ namespace Files.App.Filesystem
 
 			var sw = new Stopwatch();
 			sw.Start();
-
-			IStorageHistory history = await filesystemOperations.RestoreItemsFromTrashAsync((IList<IStorageItemWithPath>)source, (IList<string>)destination, null, errorCode, cancellationToken);
+            
+            if (filesystemOperations is null) return default;
+            IStorageHistory history = await filesystemOperations.RestoreItemsFromTrashAsync((IList<IStorageItemWithPath>)source, (IList<string>)destination, null, errorCode, cancellationToken);
 			await Task.Yield();
 
 			if (registerHistory && source.Any((item) => !string.IsNullOrWhiteSpace(item.Path)))
@@ -231,8 +205,6 @@ namespace Files.App.Filesystem
 
 			return returnStatus;
 		}
-
-		#endregion Restore
 
 		public async Task<ReturnResult> PerformOperationTypeAsync(DataPackageOperation operation,
 																  DataPackageView packageView,
@@ -293,8 +265,6 @@ namespace Files.App.Filesystem
 			}
 		}
 
-		#region Copy
-
 		public Task<ReturnResult> CopyItemsAsync(IEnumerable<IStorageItem> source, IEnumerable<string> destination, bool showDialog, bool registerHistory)
 			=> CopyItemsAsync(source.Select((item) => item.FromStorageItem()), destination, showDialog, registerHistory);
 
@@ -322,8 +292,8 @@ namespace Files.App.Filesystem
 			}
 
 			itemManipulationModel?.ClearSelection();
-
-			IStorageHistory history = await filesystemOperations.CopyItemsAsync((IList<IStorageItemWithPath>)source, (IList<string>)destination, collisions, banner.Progress, banner.ErrorCode, token);
+            if (filesystemOperations is null) return default;
+            IStorageHistory history = await filesystemOperations.CopyItemsAsync((IList<IStorageItemWithPath>)source, (IList<string>)destination, collisions, banner.Progress, banner.ErrorCode, token);
 			((IProgress<float>)banner.Progress).Report(100.0f);
 			await Task.Yield();
 
@@ -359,7 +329,9 @@ namespace Files.App.Filesystem
 			var handledByFtp = await CheckDragNeedsFulltrust(packageView);
 			var source = await GetDraggedStorageItems(packageView);
 
-			if (handledByFtp)
+            if (recycleBinHelpers is null || associatedInstance is null) return default;
+
+            if (handledByFtp)
 				return await FileOperationsHelpers.DragDropAsync(associatedInstance.FilesystemViewModel.WorkingDirectory) ? ReturnResult.Success : ReturnResult.Failed;
 
 			if (!source.IsEmpty())
@@ -367,7 +339,7 @@ namespace Files.App.Filesystem
 				ReturnResult returnStatus = ReturnResult.InProgress;
 
 				var destinations = new List<string>();
-				List<ShellFileItem> binItems = null;
+				List<ShellFileItem>? binItems = null;
 				foreach (var item in source)
 				{
 					if (recycleBinHelpers.IsPathUnderRecycleBin(item.Path))
@@ -421,10 +393,6 @@ namespace Files.App.Filesystem
 			return ReturnResult.BadArgumentException;
 		}
 
-		#endregion Copy
-
-		#region Move
-
 		public Task<ReturnResult> MoveItemsAsync(IEnumerable<IStorageItem> source, IEnumerable<string> destination, bool showDialog, bool registerHistory)
 			=> MoveItemsAsync(source.Select((item) => item.FromStorageItem()), destination, showDialog, registerHistory);
 
@@ -458,8 +426,8 @@ namespace Files.App.Filesystem
 			sw.Start();
 
 			itemManipulationModel?.ClearSelection();
-
-			IStorageHistory history = await filesystemOperations.MoveItemsAsync((IList<IStorageItemWithPath>)source, (IList<string>)destination, collisions, banner.Progress, banner.ErrorCode, token);
+            if (filesystemOperations is null) return default;
+            IStorageHistory history = await filesystemOperations.MoveItemsAsync((IList<IStorageItemWithPath>)source, (IList<string>)destination, collisions, banner.Progress, banner.ErrorCode, token);
 			((IProgress<float>)banner.Progress).Report(100.0f);
 			await Task.Yield();
 
@@ -510,9 +478,10 @@ namespace Files.App.Filesystem
 			var source = await GetDraggedStorageItems(packageView);
 
 			ReturnResult returnStatus = ReturnResult.InProgress;
-
+            
+            if (recycleBinHelpers is null) return default;
 			var destinations = new List<string>();
-			List<ShellFileItem> binItems = null;
+			List<ShellFileItem>? binItems = null;
 			foreach (var item in source)
 			{
 				if (recycleBinHelpers.IsPathUnderRecycleBin(item.Path))
@@ -535,10 +504,6 @@ namespace Files.App.Filesystem
 			return returnStatus;
 		}
 
-		#endregion Move
-
-		#region Rename
-
 		public Task<ReturnResult> RenameAsync(IStorageItem source, string newName, NameCollisionOption collision, bool registerHistory, bool showExtensionDialog = true)
 			=> RenameAsync(source.FromStorageItem(), newName, collision, registerHistory, showExtensionDialog);
 
@@ -548,7 +513,9 @@ namespace Files.App.Filesystem
 			var errorCode = new Progress<FileSystemStatusCode>();
 			errorCode.ProgressChanged += (s, e) => returnStatus = returnStatus < ReturnResult.Failed ? e.ToStatus() : returnStatus;
 
-			IStorageHistory history = null;
+            if (filesystemOperations is null) return default;
+
+            IStorageHistory? history = null;
 
 			switch (source.ItemType)
 			{
@@ -589,8 +556,6 @@ namespace Files.App.Filesystem
 			return returnStatus;
 		}
 
-		#endregion Rename
-
 		public async Task<ReturnResult> CreateShortcutFromClipboard(DataPackageView packageView, string destination, bool showDialog, bool registerHistory)
 		{
 			if (!HasDraggedStorageItems(packageView))
@@ -618,7 +583,9 @@ namespace Files.App.Filesystem
 			source = await source.ToListAsync();
 			dest = await dest.ToListAsync();
 
-			var history = await filesystemOperations.CreateShortcutItemsAsync((IList<IStorageItemWithPath>)source, (IList<string>)dest, null, errorCode, cancellationToken);
+            if (filesystemOperations is null) return default;
+
+            var history = await filesystemOperations.CreateShortcutItemsAsync((IList<IStorageItemWithPath>)source, (IList<string>)dest, null, errorCode, cancellationToken);
 
 			if (registerHistory)
 			{
@@ -647,13 +614,12 @@ namespace Files.App.Filesystem
 			var source = await GetDraggedStorageItems(packageView);
 			ReturnResult returnStatus = ReturnResult.InProgress;
 
-			source = source.Where(x => !recycleBinHelpers.IsPathUnderRecycleBin(x.Path)); // Can't recycle items already in recyclebin
+            if (recycleBinHelpers is null) return default;
+            source = source.Where(x => !recycleBinHelpers.IsPathUnderRecycleBin(x.Path)); // Can't recycle items already in recyclebin
 			returnStatus = await DeleteItemsAsync(source, showDialog, false, registerHistory);
 
 			return returnStatus;
 		}
-
-		#endregion IFilesystemHelpers
 
 		private static async Task<(List<FileNameConflictResolveOptionType> collisions, bool cancelOperation, IEnumerable<IFileSystemDialogConflictItemViewModel>)> GetCollision(FilesystemOperationType operationType, IEnumerable<IStorageItemWithPath> source, IEnumerable<string> destination, bool forceDialog)
 		{
@@ -665,13 +631,13 @@ namespace Files.App.Filesystem
 			{
 				var itemPathOrName = string.IsNullOrEmpty(item.src.Path) ? item.src.Item.Name : item.src.Path;
 				incomingItems.Add(new FileSystemDialogConflictItemViewModel() { ConflictResolveOption = FileNameConflictResolveOptionType.None, SourcePath = itemPathOrName, DestinationPath = item.dest, DestinationDisplayName = Path.GetFileName(item.dest) });
-				if (collisions.ContainsKey(incomingItems.ElementAt(item.index).SourcePath))
+				if (collisions.ContainsKey(incomingItems.ElementAt(item.index).SourcePath ?? string.Empty))
 				{
 					// Something strange happened, log
 					App.Logger.Warn($"Duplicate key when resolving conflicts: {incomingItems.ElementAt(item.index).SourcePath}, {item.src.Name}\n" +
 						$"Source: {string.Join(", ", source.Select(x => string.IsNullOrEmpty(x.Path) ? x.Item.Name : x.Path))}");
 				}
-				collisions.AddIfNotPresent(incomingItems.ElementAt(item.index).SourcePath, FileNameConflictResolveOptionType.GenerateNewName);
+				collisions.AddIfNotPresent(incomingItems.ElementAt(item.index).SourcePath ?? string.Empty, FileNameConflictResolveOptionType.GenerateNewName);
 
 				// Assume GenerateNewName when source and destination are the same
 				if (string.IsNullOrEmpty(item.src.Path) || item.src.Path != item.dest)
@@ -711,7 +677,7 @@ namespace Files.App.Filesystem
 				collisions.Clear();
 				foreach (var item in itemsResult)
 				{
-					collisions.AddIfNotPresent(item.SourcePath, item.ConflictResolveOption);
+					collisions.AddIfNotPresent(item.SourcePath ?? string.Empty, item.ConflictResolveOption);
 				}
 			}
 
@@ -728,9 +694,6 @@ namespace Files.App.Filesystem
 
 			return (newCollisions, false, itemsResult ?? new List<IFileSystemDialogConflictItemViewModel>());
 		}
-
-		#region Public Helpers
-
 		public static bool HasDraggedStorageItems(DataPackageView packageView)
 		{
 			return packageView is not null && (packageView.Contains(StandardDataFormats.StorageItems) || (packageView.Properties.TryGetValue("FileDrop", out _)));
@@ -796,6 +759,7 @@ namespace Files.App.Filesystem
 			{
 				input = input.Remove(invalidCharIndex, 1);
 			}
+			
 			return input;
 		}
 
@@ -815,9 +779,6 @@ namespace Files.App.Filesystem
 			return false;
 		}
 
-		#endregion Public Helpers
-
-		#region IDisposable
 
 		public void Dispose()
 		{
@@ -827,7 +788,5 @@ namespace Files.App.Filesystem
 			filesystemOperations = null;
 			recycleBinHelpers = null;
 		}
-
-		#endregion IDisposable
 	}
 }

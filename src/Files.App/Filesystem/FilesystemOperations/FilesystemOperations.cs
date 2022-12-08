@@ -34,21 +34,15 @@ namespace Files.App.Filesystem
 
 		private RecycleBinHelpers recycleBinHelpers;
 
-		#region Constructor
-
 		public FilesystemOperations(IShellPage associatedInstance)
 		{
 			this.associatedInstance = associatedInstance;
 			recycleBinHelpers = new RecycleBinHelpers();
 		}
-
-		#endregion Constructor
-
-		#region IFilesystemOperations
-
-		public async Task<(IStorageHistory, IStorageItem)> CreateAsync(IStorageItemWithPath source, IProgress<FileSystemStatusCode> errorCode, CancellationToken cancellationToken)
+		
+		public async Task<(IStorageHistory?, IStorageItem?)> CreateAsync(IStorageItemWithPath source, IProgress<FileSystemStatusCode> errorCode, CancellationToken cancellationToken)
 		{
-			IStorageItemWithPath item = null;
+			IStorageItemWithPath? item = null;
 			FilesystemResult fsResult = (FilesystemResult)false;
 			try
 			{
@@ -63,9 +57,11 @@ namespace Files.App.Filesystem
 								fsResult = fsFolderResult;
 								if (fsResult)
 								{
+									if (fsFolderResult.Result is null) return default;
 									var fsCreateResult = await FilesystemTasks.Wrap(() => fsFolderResult.Result.CreateFileAsync(Path.GetFileName(source.Path), CreationCollisionOption.GenerateUniqueName).AsTask());
+									if (fsCreateResult.Result is null) return default;
 									fsResult = fsCreateResult;
-									item = fsCreateResult.Result.FromStorageItem();
+                                    item = fsCreateResult.Result.FromStorageItem();
 								}
 								if (fsResult == FileSystemStatusCode.Unauthorized)
 								{
@@ -78,7 +74,8 @@ namespace Files.App.Filesystem
 								fsResult = fsCreateResult;
 								if (fsResult)
 								{
-									item = fsCreateResult.Result.FromStorageItem();
+                                    if (fsCreateResult.Result is null) return default;
+                                    item = fsCreateResult.Result.FromStorageItem();
 								}
 								if (fsResult == FileSystemStatusCode.Unauthorized)
 								{
@@ -95,9 +92,11 @@ namespace Files.App.Filesystem
 							fsResult = fsFolderResult;
 							if (fsResult)
 							{
-								var fsCreateResult = await FilesystemTasks.Wrap(() => fsFolderResult.Result.CreateFolderAsync(Path.GetFileName(source.Path), CreationCollisionOption.GenerateUniqueName).AsTask());
+                                if (fsFolderResult.Result is null) return default;
+                                var fsCreateResult = await FilesystemTasks.Wrap(() => fsFolderResult.Result.CreateFolderAsync(Path.GetFileName(source.Path), CreationCollisionOption.GenerateUniqueName).AsTask());
 								fsResult = fsCreateResult;
-								item = fsCreateResult.Result.FromStorageItem();
+                                if (fsCreateResult.Result is null) return default;
+                                item = fsCreateResult.Result.FromStorageItem();
 							}
 							if (fsResult == FileSystemStatusCode.Unauthorized)
 							{
@@ -123,7 +122,7 @@ namespace Files.App.Filesystem
 			}
 		}
 
-		public Task<IStorageHistory> CopyAsync(IStorageItem source,
+		public Task<IStorageHistory?> CopyAsync(IStorageItem source,
 													 string destination,
 													 NameCollisionOption collision,
 													 IProgress<float> progress,
@@ -131,7 +130,7 @@ namespace Files.App.Filesystem
 													 CancellationToken cancellationToken)
 			=> CopyAsync(source.FromStorageItem(), destination, collision, progress, errorCode, cancellationToken);
 
-		public async Task<IStorageHistory> CopyAsync(IStorageItemWithPath source,
+		public async Task<IStorageHistory?> CopyAsync(IStorageItemWithPath source,
 													 string destination,
 													 NameCollisionOption collision,
 													 IProgress<float> progress,
@@ -150,7 +149,7 @@ namespace Files.App.Filesystem
 				return null;
 			}
 
-			IStorageItem copiedItem = null;
+			IStorageItem? copiedItem = null;
 			//long itemSize = await FilesystemHelpers.GetItemSize(await source.ToStorageItem(associatedInstance));
 
 			if (source.ItemType == FilesystemItemType.Directory)
@@ -160,7 +159,7 @@ namespace Files.App.Filesystem
 				{
 					var destinationName = destination.Split(Path.DirectorySeparatorChar, StringSplitOptions.RemoveEmptyEntries).Last();
 					var sourceName = source.Path.Split(Path.DirectorySeparatorChar, StringSplitOptions.RemoveEmptyEntries).Last();
-					ContentDialog dialog = new ContentDialog()
+					ContentDialog dialog = new()
 					{
 						Title = "ErrorDialogThisActionCannotBeDone".GetLocalizedResource(),
 						Content = $"{"ErrorDialogTheDestinationFolder".GetLocalizedResource()} ({destinationName}) {"ErrorDialogIsASubfolder".GetLocalizedResource()} ({sourceName})",
@@ -205,6 +204,7 @@ namespace Files.App.Filesystem
 							if (NativeFileOperationsHelper.HasFileAttribute(source.Path, FileAttributes.Hidden))
 							{
 								// The source folder was hidden, apply hidden attribute to destination
+								if (fsCopyResult.Result is null) return default;
 								NativeFileOperationsHelper.SetFileAttribute(fsCopyResult.Result.Path, FileAttributes.Hidden);
 							}
 							copiedItem = (BaseStorageFolder)fsCopyResult;
@@ -292,7 +292,7 @@ namespace Files.App.Filesystem
 				return null; // Cannot undo overwrite operation
 			}
 
-			var pathWithType = copiedItem.FromStorageItem(destination, source.ItemType);
+			var pathWithType = copiedItem?.FromStorageItem(destination, source.ItemType);
 
 			return new StorageHistory(FileOperationType.Copy, source, pathWithType);
 		}
@@ -806,10 +806,8 @@ namespace Files.App.Filesystem
 			return new StorageHistory(FileOperationType.Restore, source, StorageHelpers.FromPathAndType(destination, source.ItemType));
 		}
 
-		#endregion IFilesystemOperations
-
-		#region Helpers
-
+		
+		
 		private async static Task<BaseStorageFolder> CloneDirectoryAsync(BaseStorageFolder sourceFolder, BaseStorageFolder destinationFolder, string sourceRootName, CreationCollisionOption collision = CreationCollisionOption.FailIfExists)
 		{
 			BaseStorageFolder createdRoot = await destinationFolder.CreateFolderAsync(sourceRootName, collision);
@@ -828,18 +826,15 @@ namespace Files.App.Filesystem
 			return createdRoot;
 		}
 
-		#endregion Helpers
-
-		#region IDisposable
-
+		
+		
 		public void Dispose()
 		{
 			recycleBinHelpers = null;
 			associatedInstance = null;
 		}
 
-		#endregion IDisposable
-
+		
 		public async Task<IStorageHistory> CopyItemsAsync(IList<IStorageItem> source, IList<string> destination, IList<FileNameConflictResolveOptionType> collisions, IProgress<float> progress, IProgress<FileSystemStatusCode> errorCode, CancellationToken cancellationToken)
 		{
 			return await CopyItemsAsync(await source.Select((item) => item.FromStorageItem()).ToListAsync(), destination, collisions, progress, errorCode, cancellationToken);

@@ -5,7 +5,7 @@
 		public CloudProviders ID { get; }
 
 		public string Name { get; init; } = string.Empty;
-		public string SyncFolder { get; init; } = string.Empty;
+		public string? SyncFolder { get; init; } = string.Empty;
 		public byte[]? IconData { get; init; }
 
 		public CloudProvider(CloudProviders id) => ID = id;

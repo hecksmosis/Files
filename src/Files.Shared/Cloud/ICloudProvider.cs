@@ -7,7 +7,7 @@ namespace Files.Shared.Cloud
 		public CloudProviders ID { get; }
 
 		public string Name { get; }
-		public string SyncFolder { get; }
+		public string? SyncFolder { get; }
 		public byte[]? IconData { get; }
 	}
 }

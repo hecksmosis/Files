@@ -14,7 +14,7 @@ namespace Files.App.Filesystem.FilesystemHistory
 
 		public IStorageHistory GetCurrentHistory() => histories[index];
 
-		public void AddHistory(IStorageHistory history)
+		public void AddHistory(IStorageHistory? history)
 		{
 			if (history is not null)
 			{

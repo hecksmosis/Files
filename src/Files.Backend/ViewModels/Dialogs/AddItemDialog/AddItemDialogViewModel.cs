@@ -19,7 +19,7 @@ namespace Files.Backend.ViewModels.Dialogs.AddItemDialog
 
 		public ObservableCollection<AddItemDialogListItemViewModel> AddItemsList { get; }
 
-		public AddItemDialogResultModel ResultType { get; set; } = new AddItemDialogResultModel() { ItemType = AddItemDialogItemType.Cancel };
+		public AddItemDialogResultModel? ResultType { get; set; } = new AddItemDialogResultModel() { ItemType = AddItemDialogItemType.Cancel };
 
 		public AddItemDialogViewModel()
 		{

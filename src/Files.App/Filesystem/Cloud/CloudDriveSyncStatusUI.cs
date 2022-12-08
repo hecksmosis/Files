@@ -6,7 +6,7 @@ namespace Files.App.Filesystem.Cloud
 {
 	public class CloudDriveSyncStatusUI : ObservableObject
 	{
-		public string Glyph { get; }
+		public string? Glyph { get; }
 
 		public CloudDriveSyncStatus SyncStatus { get; }
 		public bool LoadSyncStatus { get; }

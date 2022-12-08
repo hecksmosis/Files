@@ -72,7 +72,7 @@ namespace Files.App.Dialogs
 
 		private void PrimaryButton_GotFocus(object sender, RoutedEventArgs e)
 		{
-			(sender as Button).GotFocus -= PrimaryButton_GotFocus;
+			((Button)sender).GotFocus -= PrimaryButton_GotFocus;
 			if (chkPermanentlyDelete is not null)
 			{
 				chkPermanentlyDelete.IsEnabled = ViewModel.IsDeletePermanentlyEnabled;
@@ -82,7 +82,7 @@ namespace Files.App.Dialogs
 
 		private void MenuFlyoutItem_Click(object sender, RoutedEventArgs e)
 		{
-			var t = (sender as MenuFlyoutItem).Tag as string;
+			var t = ((MenuFlyoutItem)sender).Tag as string;
 			if (t == "All")
 			{
 				if (DetailsGrid.SelectedItems.FirstOrDefault() is FileSystemDialogConflictItemViewModel conflictItem)
@@ -93,7 +93,7 @@ namespace Files.App.Dialogs
 				return;
 			}
 
-			var op = (FileNameConflictResolveOptionType)int.Parse(t);
+			var op = (FileNameConflictResolveOptionType)int.Parse(t ?? string.Empty);
 			foreach (var item in DetailsGrid.SelectedItems)
 			{
 				if (item is FileSystemDialogConflictItemViewModel conflictItem)
@@ -116,7 +116,7 @@ namespace Files.App.Dialogs
 				DetailsGrid.SelectedItems.Add(li);
 			}
 
-			if (DetailsGrid.Items.Count > 1 && DetailsGrid.SelectedItems.Count == 1 && !DetailsGrid.SelectedItems.Any(x => (x as FileSystemDialogConflictItemViewModel).IsDefault))
+			if (DetailsGrid.Items.Count > 1 && DetailsGrid.SelectedItems.Count == 1 && !DetailsGrid.SelectedItems.Any(x => ((FileSystemDialogConflictItemViewModel)x).IsDefault))
 			{
 				ApplyToAllOption.Visibility = Visibility.Visible;
 				ApplyToAllSeparator.Visibility = Visibility.Visible;
@@ -149,7 +149,7 @@ namespace Files.App.Dialogs
 		{
 			if ((sender as FrameworkElement)?.DataContext is FileSystemDialogConflictItemViewModel conflictItem)
 			{
-				conflictItem.CustomName = FilesystemHelpers.FilterRestrictedCharacters(conflictItem.CustomName);
+                conflictItem.CustomName = FilesystemHelpers.FilterRestrictedCharacters(conflictItem.CustomName ?? string.Empty);
 
 				if (ViewModel.IsNameAvailableForItem(conflictItem, conflictItem.CustomName!))
 				{

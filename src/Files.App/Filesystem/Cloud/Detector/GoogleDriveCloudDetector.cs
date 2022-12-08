@@ -70,7 +70,7 @@ namespace Files.App.Filesystem.Cloud
 
 				var folder = await StorageFolder.GetFolderFromPathAsync(path);
 				string title = reader["name"]?.ToString() ?? folder.Name;
-				string iconPath = Path.Combine(Environment.GetEnvironmentVariable("ProgramFiles"), "Google", "Drive File Stream", "drive_fs.ico");
+				string iconPath = Path.Combine(Environment.GetEnvironmentVariable("ProgramFiles") ?? string.Empty, "Google", "Drive File Stream", "drive_fs.ico");
 				StorageFile iconFile = await FilesystemTasks.Wrap(() => StorageFile.GetFileFromPathAsync(iconPath).AsTask());
 
 				yield return new CloudProvider(CloudProviders.GoogleDrive)

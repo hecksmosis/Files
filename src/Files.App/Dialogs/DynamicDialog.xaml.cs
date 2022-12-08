@@ -10,21 +10,21 @@ namespace Files.App.Dialogs
 {
 	public sealed partial class DynamicDialog : ContentDialog, IDisposable
 	{
-		public DynamicDialogViewModel ViewModel
+		public DynamicDialogViewModel? ViewModel
 		{
 			get => (DynamicDialogViewModel)DataContext;
 			private set => DataContext = value;
 		}
 
-		public DynamicDialogResult DynamicResult
+		public DynamicDialogResult? DynamicResult
 		{
-			get => ViewModel.DynamicResult;
+			get => ViewModel is not null ? ViewModel.DynamicResult : null;
 		}
 
 		public new Task<ContentDialogResult> ShowAsync() => SetContentDialogRoot(this).ShowAsync().AsTask();
 
 		// WINUI3
-		private ContentDialog SetContentDialogRoot(ContentDialog contentDialog)
+		private static ContentDialog SetContentDialogRoot(ContentDialog contentDialog)
 		{
 			if (Windows.Foundation.Metadata.ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 8))
 			{
@@ -41,34 +41,34 @@ namespace Files.App.Dialogs
 			this.ViewModel = dynamicDialogViewModel;
 		}
 
-		#region IDisposable
-
 		public void Dispose()
 		{
 			ViewModel?.Dispose();
 			ViewModel = null;
 		}
 
-		#endregion IDisposable
-
 		private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
 		{
-			ViewModel.PrimaryButtonCommand.Execute(args);
+			if (ViewModel is not null)
+				ViewModel.PrimaryButtonCommand.Execute(args);
 		}
 
 		private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
 		{
-			ViewModel.SecondaryButtonCommand.Execute(args);
+            if (ViewModel is not null) 
+				ViewModel.SecondaryButtonCommand.Execute(args);
 		}
 
 		private void ContentDialog_CloseButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
 		{
-			ViewModel.CloseButtonCommand.Execute(args);
+            if (ViewModel is not null) 
+				ViewModel.CloseButtonCommand.Execute(args);
 		}
 
 		private void ContentDialog_KeyDown(object sender, Microsoft.UI.Xaml.Input.KeyRoutedEventArgs e)
 		{
-			ViewModel.KeyDownCommand.Execute(e);
+            if (ViewModel is not null) 
+				ViewModel.KeyDownCommand.Execute(e);
 		}
 	}
 }

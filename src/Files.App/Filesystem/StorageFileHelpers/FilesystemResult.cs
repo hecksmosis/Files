@@ -17,9 +17,9 @@ namespace Files.App.Filesystem
 
 	public class FilesystemResult<T> : FilesystemResult
 	{
-		public T Result { get; }
+		public T? Result { get; }
 
-		public FilesystemResult(T result, FileSystemStatusCode errorCode) : base(errorCode) => Result = result;
+		public FilesystemResult(T? result, FileSystemStatusCode errorCode) : base(errorCode) => Result = result;
 
 		public static implicit operator T(FilesystemResult<T> res) => res.Result;
 	}

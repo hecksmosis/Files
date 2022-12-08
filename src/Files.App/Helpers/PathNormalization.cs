@@ -62,12 +62,12 @@ namespace Files.App.Helpers
 			}
 		}
 
-		public static string TrimPath(this string path)
+		public static string? TrimPath(this string path)
 		{
 			return path?.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
 		}
 
-		public static string GetParentDir(string path)
+		public static string GetParentDir(string? path)
 		{
 			if (string.IsNullOrEmpty(path))
 			{

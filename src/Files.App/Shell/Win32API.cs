@@ -213,10 +213,10 @@ namespace Files.App.Shell
 		private static readonly ConcurrentDictionary<string, ConcurrentDictionary<int, IconAndOverlayCacheEntry>> _iconAndOverlayCache = new();
 
 		private static readonly object _lock = new object();
-		public static (byte[]? icon, byte[]? overlay) GetFileIconAndOverlay(string path, int thumbnailSize, bool isFolder, bool getOverlay = true, bool onlyGetOverlay = false)
+		public static (byte[]? icon, byte[]? overlay) GetFileIconAndOverlay(string? path, int thumbnailSize, bool isFolder, bool getOverlay = true, bool onlyGetOverlay = false)
 		{
 			byte[]? iconData = null, overlayData = null;
-			var entry = _iconAndOverlayCache.GetOrAdd(path, _ => new());
+			var entry = _iconAndOverlayCache.GetOrAdd(path ?? string.Empty, _ => new());
 
 			if (entry.TryGetValue(thumbnailSize, out var cacheEntry))
 			{
@@ -256,7 +256,7 @@ namespace Files.App.Shell
 					var shfi = new Shell32.SHFILEINFO();
 					var flags = Shell32.SHGFI.SHGFI_OVERLAYINDEX | Shell32.SHGFI.SHGFI_ICON | Shell32.SHGFI.SHGFI_SYSICONINDEX | Shell32.SHGFI.SHGFI_ICONLOCATION;
 					var useFileAttibutes = !onlyGetOverlay && iconData is null; // Cannot access file, use file attributes
-					var ret = ShellFolderExtensions.GetStringAsPidl(path, out var pidl) ?
+					var ret = ShellFolderExtensions.GetStringAsPidl(path ?? string.Empty, out var pidl) ?
 						Shell32.SHGetFileInfo(pidl, 0, ref shfi, Shell32.SHFILEINFO.Size, Shell32.SHGFI.SHGFI_PIDL | flags) :
 						Shell32.SHGetFileInfo(path, isFolder ? FileAttributes.Directory : 0, ref shfi, Shell32.SHFILEINFO.Size, flags | (useFileAttibutes ? Shell32.SHGFI.SHGFI_USEFILEATTRIBUTES : 0));
 					if (ret == IntPtr.Zero)

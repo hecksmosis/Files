@@ -30,9 +30,9 @@ namespace Files.App.Filesystem
 		/// <br/>
 		/// Destination: null
 		/// </returns>
-		Task<(IStorageHistory, IStorageItem)> CreateAsync(IStorageItemWithPath source, IProgress<FileSystemStatusCode> errorCode, CancellationToken cancellationToken);
+		Task<(IStorageHistory?, IStorageItem?)> CreateAsync(IStorageItemWithPath source, IProgress<FileSystemStatusCode> errorCode, CancellationToken cancellationToken);
 
-		Task<IStorageHistory> CreateShortcutItemsAsync(IList<IStorageItemWithPath> source, IList<string> destination, IProgress<float> progress, IProgress<FileSystemStatusCode> errorCode, CancellationToken cancellationToken);
+		Task<IStorageHistory> CreateShortcutItemsAsync(IList<IStorageItemWithPath> source, IList<string> destination, IProgress<float>? progress, IProgress<FileSystemStatusCode> errorCode, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Copies <paramref name="source"/> to <paramref name="destination"/> fullPath
@@ -49,7 +49,7 @@ namespace Files.App.Filesystem
 		/// <br/>
 		/// Destination: The <paramref name="destination"/> item fullPath (as <see cref="PathWithType"/>) the <paramref name="source"/> was copied
 		/// </returns>
-		Task<IStorageHistory> CopyAsync(IStorageItem source,
+		Task<IStorageHistory?> CopyAsync(IStorageItem source,
 										string destination,
 										NameCollisionOption collision,
 										IProgress<float> progress,
@@ -71,7 +71,7 @@ namespace Files.App.Filesystem
 		/// <br/>
 		/// Destination: The <paramref name="destination"/> item fullPath (as <see cref="PathWithType"/>) the <paramref name="source"/> was copied
 		/// </returns>
-		Task<IStorageHistory> CopyAsync(IStorageItemWithPath source,
+		Task<IStorageHistory?> CopyAsync(IStorageItemWithPath source,
 										string destination,
 										NameCollisionOption collision,
 										IProgress<float> progress,
@@ -325,7 +325,7 @@ namespace Files.App.Filesystem
 		/// </returns>
 		Task<IStorageHistory> RestoreItemsFromTrashAsync(IList<IStorageItemWithPath> source,
 														 IList<string> destination,
-														 IProgress<float> progress,
+														 IProgress<float>? progress,
 														 IProgress<FileSystemStatusCode> errorCode,
 														 CancellationToken cancellationToken);
 
