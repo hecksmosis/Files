@@ -152,8 +152,8 @@ namespace Files.App.ViewModels
 
 		public Task<FilesystemResult<BaseStorageFile>> GetFileFromPathAsync(string value)
 			=> FilesystemTasks.Wrap(() => StorageFileExtensions.DangerousGetFileFromPathAsync(value, workingRoot, currentStorageFolder));
-
-		public Task<FilesystemResult<StorageFolderWithPath>> GetFolderWithPathFromPathAsync(string value)
+        
+        public Task<FilesystemResult<StorageFolderWithPath>> GetFolderWithPathFromPathAsync(string value)
 			=> FilesystemTasks.Wrap(() => StorageFileExtensions.DangerousGetFolderWithPathFromPathAsync(value, workingRoot, currentStorageFolder));
 
 		public Task<FilesystemResult<StorageFileWithPath>> GetFileWithPathFromPathAsync(string value)

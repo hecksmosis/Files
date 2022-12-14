@@ -33,8 +33,8 @@ namespace Files.App.Filesystem
 		protected static IDateTimeFormatter DateTimeFormatter { get; } = Ioc.Default.GetRequiredService<IDateTimeFormatter>();
 
 		public bool IsHiddenItem { get; set; } = false;
-
-		public StorageItemTypes PrimaryItemAttribute { get; set; }
+        
+        public StorageItemTypes PrimaryItemAttribute { get; set; }
 
 		private volatile int itemPropertiesInitialized = 0;
 		public bool ItemPropertiesInitialized

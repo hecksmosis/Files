@@ -27,8 +27,8 @@ namespace Files.App.Interacts
 		public event EventHandler SetDragModeForItemsInvoked;
 
 		public event EventHandler RefreshItemsOpacityInvoked;
-
-		public event EventHandler RefreshItemThumbnailInvoked;
+        
+        public event EventHandler RefreshItemThumbnailInvoked;
 
 		public event EventHandler RefreshItemsThumbnailInvoked;
 
@@ -111,7 +111,7 @@ namespace Files.App.Interacts
 		}
 
 		public void RefreshItemsOpacity()
-		{
+		{ 
 			RefreshItemsOpacityInvoked?.Invoke(this, EventArgs.Empty);
 		}
 

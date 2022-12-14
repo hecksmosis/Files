@@ -18,6 +18,8 @@ using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage;
 using Windows.System;
+using static Files.Backend.Helpers.NativeFindStorageItemHelper;
+
 
 namespace Files.App.Helpers
 {
@@ -372,5 +374,11 @@ namespace Files.App.Helpers
 			item.IsHiddenItem = isHidden;
 			itemManipulationModel.RefreshItemsOpacity();
 		}
-	}
+
+        public static async void SetShortcutIsRunAsAdmin(ShortcutItem item, bool isRunAsAdmin, ItemManipulationModel itemManipulationModel)
+        {
+            item.RunAsAdmin = isRunAsAdmin;
+            await FileOperationsHelpers.CreateOrUpdateLinkAsync(item.ItemPath, item.TargetPath, item.Arguments, item.WorkingDirectory, item.RunAsAdmin);
+        }
+    }
 }

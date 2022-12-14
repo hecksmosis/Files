@@ -314,7 +314,7 @@ namespace Files.App
 			return items ?? new List<ListedItem>();
 		}
 
-		public virtual void ResetItemOpacity()
+        public virtual void ResetItemOpacity()
 		{
 			foreach (var item in GetAllItems())
 			{

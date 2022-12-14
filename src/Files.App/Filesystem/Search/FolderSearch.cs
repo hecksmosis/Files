@@ -345,6 +345,7 @@ namespace Files.App.Filesystem.Search
 			ListedItem listedItem = null;
 			var isHidden = ((FileAttributes)findData.dwFileAttributes & FileAttributes.Hidden) == FileAttributes.Hidden;
 			var isFolder = ((FileAttributes)findData.dwFileAttributes & FileAttributes.Directory) == FileAttributes.Directory;
+            
 			if (!isFolder)
 			{
 				string itemFileExtension = null;
@@ -361,7 +362,7 @@ namespace Files.App.Filesystem.Search
 					ItemNameRaw = findData.cFileName,
 					ItemPath = itemPath,
 					IsHiddenItem = isHidden,
-					LoadFileIcon = false,
+                    LoadFileIcon = false,
 					FileExtension = itemFileExtension,
 					ItemType = itemType,
 					Opacity = isHidden ? Constants.UI.DimItemOpacity : 1

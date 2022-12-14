@@ -607,7 +607,18 @@ namespace Files.App.ViewModels
         public bool IsRunAsAdmin
         {
             get => isRunAsAdmin;
-            set => SetProperty(ref isRunAsAdmin, value);
+			set
+			{
+				IsRunAsAdminEnabled = true;
+				SetProperty(ref isRunAsAdmin, value);
+			}
+        }
+
+		private bool isRunAsAdminEnabled;
+        public bool IsRunAsAdminEnabled
+        {
+            get => isRunAsAdminEnabled;
+            set => SetProperty(ref isRunAsAdminEnabled, value);
         }
     }
 }

@@ -5,6 +5,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 using Windows.Storage;
 
@@ -41,7 +42,7 @@ namespace Files.App.ViewModels.Properties
 			{
 				if (item.PrimaryItemAttribute == StorageItemTypes.File || item.IsArchive)
 				{
-					BaseProperties = new FileProperties(ViewModel, np.tokenSource, DispatcherQueue, item, AppInstance);
+                    BaseProperties = new FileProperties(ViewModel, np.tokenSource, DispatcherQueue, item, AppInstance);
 				}
 				else if (item.PrimaryItemAttribute == StorageItemTypes.Folder)
 				{
@@ -70,11 +71,11 @@ namespace Files.App.ViewModels.Properties
 			base.OnNavigatedFrom(e);
 		}
 
-		/// <summary>
-		/// Tries to save changed properties to file.
-		/// </summary>
-		/// <returns>Returns true if properties have been saved successfully.</returns>
-		public abstract Task<bool> SaveChangesAsync(ListedItem item);
+        /// <summary>
+        /// Tries to save changed properties to file.
+        /// </summary>
+        /// <returns>Returns true if properties have been saved successfully.</returns>
+        public abstract Task<bool> SaveChangesAsync(ListedItem item);
 
 		public abstract void Dispose();
 	}
