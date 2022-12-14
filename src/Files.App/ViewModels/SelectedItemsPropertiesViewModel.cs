@@ -602,5 +602,12 @@ namespace Files.App.ViewModels
 			get => isHidden;
 			set => SetProperty(ref isHidden, value);
 		}
-	}
+
+		private bool isRunAsAdmin;
+        public bool IsRunAsAdmin
+        {
+            get => isRunAsAdmin;
+            set => SetProperty(ref isRunAsAdmin, value);
+        }
+    }
 }

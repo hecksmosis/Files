@@ -42,7 +42,7 @@ namespace Files.App.Helpers
 			return await ShowDialogAsync(dialog) == DynamicDialogResult.Primary;
 		}
 
-		public static async Task<DynamicDialogResult> ShowDialogAsync(DynamicDialog dialog)
+		public static async Task<DynamicDialogResult?> ShowDialogAsync(DynamicDialog dialog)
 		{
 			try
 			{

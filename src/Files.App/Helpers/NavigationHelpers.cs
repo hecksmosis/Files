@@ -126,6 +126,8 @@ namespace Files.App.Helpers
 
 			FilesystemResult opened = (FilesystemResult)false;
 
+			if (associatedInstance is null) return false;
+
 			var shortcutInfo = new ShellLinkItem();
 			if (itemType is null || isShortcut || isHiddenItem || isReparsePoint)
 			{
@@ -193,7 +195,7 @@ namespace Files.App.Helpers
 			{
 				await DialogDisplayHelper.ShowDialogAsync("FileNotFoundDialog/Title".GetLocalizedResource(), "FileNotFoundDialog/Text".GetLocalizedResource());
 				associatedInstance.ToolbarViewModel.CanRefresh = false;
-				associatedInstance.FilesystemViewModel?.RefreshItems(previousDir);
+				associatedInstance.FilesystemViewModel?.RefreshItems(previousDir ?? string.Empty);
 			}
 
 			return opened;
@@ -229,11 +231,11 @@ namespace Files.App.Helpers
 				{
 					if (forceOpenInNewTab || userSettingsService.FoldersSettingsService.OpenFoldersInNewTab)
 					{
-						await OpenPathInNewTab(library.Text);
+						await OpenPathInNewTab(library.Text ?? string.Empty );
 					}
 					else
 					{
-						associatedInstance.ToolbarViewModel.PathControlDisplayText = library.Text;
+                        associatedInstance.ToolbarViewModel.PathControlDisplayText = library.Text ?? string.Empty;
 						associatedInstance.NavigateWithArguments(associatedInstance.InstanceViewModel.FolderSettings.GetLayoutType(path), new NavigationArguments()
 						{
 							NavPathParam = path,
@@ -399,17 +401,17 @@ namespace Files.App.Helpers
 							//try using launcher first
 							bool launchSuccess = false;
 
-							BaseStorageFileQueryResult fileQueryResult = null;
+							BaseStorageFileQueryResult? fileQueryResult = null;
 
 							//Get folder to create a file query (to pass to apps like Photos, Movies & TV..., needed to scroll through the folder like what Windows Explorer does)
 							BaseStorageFolder currentFolder = await associatedInstance.FilesystemViewModel.GetFolderFromPathAsync(PathNormalization.GetParentDir(path));
 
 							if (currentFolder is not null)
 							{
-								QueryOptions queryOptions = new QueryOptions(CommonFileQuery.DefaultQuery, null);
+								QueryOptions queryOptions = new(CommonFileQuery.DefaultQuery, null);
 
 								//We can have many sort entries
-								SortEntry sortEntry = new SortEntry()
+								SortEntry sortEntry = new()
 								{
 									AscendingOrder = associatedInstance.InstanceViewModel.FolderSettings.DirectorySortDirection == SortDirection.Ascending
 								};

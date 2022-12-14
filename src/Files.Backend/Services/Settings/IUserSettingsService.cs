@@ -9,7 +9,7 @@ namespace Files.Backend.Services.Settings
 
 		bool ImportSettings(object import);
 
-		object ExportSettings();
+		object? ExportSettings();
 
 		IPreferencesSettingsService PreferencesSettingsService { get; }
 

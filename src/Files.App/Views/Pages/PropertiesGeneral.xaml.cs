@@ -18,9 +18,9 @@ namespace Files.App.Views
 {
 	public sealed partial class PropertiesGeneral : PropertiesTab
 	{
-		private readonly Regex letterRegex = new(@"\s*\(\w:\)$");
+        private readonly Regex letterRegex = new(@"\s*\(\w:\)$");
 
-		public PropertiesGeneral() => InitializeComponent();
+        public PropertiesGeneral() => InitializeComponent();
 
 		public override async Task<bool> SaveChangesAsync(ListedItem item)
 		{

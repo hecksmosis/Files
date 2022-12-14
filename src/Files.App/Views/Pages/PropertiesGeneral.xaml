@@ -516,7 +516,9 @@
 						<RowDefinition Height="Auto" />
 						<RowDefinition Height="Auto" />
 						<RowDefinition Height="Auto" />
-					</Grid.RowDefinitions>
+						<RowDefinition Height="Auto" />
+						<RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
 
 					<TextBlock
 						Grid.Row="0"
@@ -555,7 +557,29 @@
 						VerticalAlignment="Center"
 						AutomationProperties.Name="{helpers:ResourceString Name=Hidden}"
 						IsChecked="{x:Bind ViewModel.IsHidden, Mode=TwoWay}" />
-				</Grid>
+
+					<MenuFlyoutSeparator
+						Grid.Row="3"
+						Grid.Column="0"
+						Grid.ColumnSpan="3"
+						Margin="-12,0"
+						Background="{ThemeResource CardStrokeColorDefaultBrush}" />
+
+                    <TextBlock
+						Grid.Row="4"
+						Grid.Column="0"
+						VerticalAlignment="Center"
+						Text="{helpers:ResourceString Name=PropertiesDialogRunAsAdmin/Text}"
+						TextWrapping="WrapWholeWords" />
+                    <CheckBox
+						Grid.Row="4"
+						Grid.Column="2"
+						MinWidth="0"
+						HorizontalAlignment="Right"
+						VerticalAlignment="Center"
+						AutomationProperties.Name="{helpers:ResourceString Name=IsRunAsAdmin}"
+						IsChecked="{x:Bind ViewModel.IsRunAsAdmin, Mode=TwoWay}" />
+                </Grid>
 			</Expander.Content>
 		</Expander>
 	</StackPanel>

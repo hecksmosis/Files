@@ -69,14 +69,14 @@ namespace Files.App.ServicesImplementation.Settings
 			Initialize(Path.Combine(ApplicationData.Current.LocalFolder.Path, Constants.LocalSettings.SettingsFolderName, Constants.LocalSettings.UserSettingsFileName));
 		}
 
-		public override object ExportSettings()
+		public override object? ExportSettings()
 		{
-			var export = (Dictionary<string, object>)base.ExportSettings();
+			var export = (Dictionary<string, object>?)base.ExportSettings();
 
 			// Remove session settings
-			export.Remove(nameof(PreferencesSettingsService.LastSessionTabList));
+			export?.Remove(nameof(PreferencesSettingsService.LastSessionTabList));
 
-			return JsonSettingsSerializer.SerializeToJson(export);
+			return JsonSettingsSerializer?.SerializeToJson(export);
 		}
 
 		public override bool ImportSettings(object import)

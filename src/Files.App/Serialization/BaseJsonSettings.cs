@@ -46,7 +46,7 @@ namespace Files.App.Serialization
 			return JsonSettingsDatabase?.FlushSettings() ?? false;
 		}
 
-		public virtual object ExportSettings()
+		public virtual object? ExportSettings()
 		{
 			return JsonSettingsDatabase?.ExportSettings() ?? false;
 		}
