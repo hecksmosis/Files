@@ -119,7 +119,7 @@ namespace Files.App.Views
 							goto rename;
 
 						await App.Window.DispatcherQueue.EnqueueAsync(() =>
-							UIFilesystemHelpers.SetShortcutIsRunAsAdmin(shortcutItem, ViewModel.IsRunAsAdmin, itemMM)
+							UIFilesystemHelpers.SetShortcutIsRunAsAdmin(shortcutItem, ViewModel.IsRunAsAdmin, AppInstance)
 						);   
                     }
                 }

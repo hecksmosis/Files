@@ -363,19 +363,24 @@ namespace Files.App.Helpers
 			}
 		}
 
-		/// <summary>
-		/// Set a single file or folder to hidden or unhidden an refresh the
-		/// view after setting the flag
-		/// </summary>
-		/// <param name="item"></param>
-		/// <param name="isHidden"></param>
-		public static void SetHiddenAttributeItem(ListedItem item, bool isHidden, ItemManipulationModel itemManipulationModel)
+        public static void RefreshItem(ListedItem item, IShellPage associatedInstance)
+        {
+            associatedInstance.Refresh_Click();
+        }
+
+        /// <summary>
+        /// Set a single file or folder to hidden or unhidden an refresh the
+        /// view after setting the flag
+        /// </summary>
+        /// <param name="item"></param>
+        /// <param name="isHidden"></param>
+        public static void SetHiddenAttributeItem(ListedItem item, bool isHidden, ItemManipulationModel itemManipulationModel)
 		{
 			item.IsHiddenItem = isHidden;
 			itemManipulationModel.RefreshItemsOpacity();
 		}
 
-        public static async void SetShortcutIsRunAsAdmin(ShortcutItem item, bool isRunAsAdmin, ItemManipulationModel itemManipulationModel)
+        public static async void SetShortcutIsRunAsAdmin(ShortcutItem item, bool isRunAsAdmin, IShellPage associatedInstance)
         {
             item.RunAsAdmin = isRunAsAdmin;
             await FileOperationsHelpers.CreateOrUpdateLinkAsync(item.ItemPath, item.TargetPath, item.Arguments, item.WorkingDirectory, item.RunAsAdmin);
