@@ -2,6 +2,7 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.WinUI;
 using Files.App.Extensions;
 using Files.App.Filesystem;
+using Files.App.Filesystem.Search;
 using Files.App.Filesystem.StorageItems;
 using Files.App.Helpers;
 using Microsoft.UI.Dispatching;
@@ -109,16 +110,19 @@ namespace Files.App.ViewModels.Properties
 				ViewModel.LoadFileIcon = true;
 			}
 
-			if (Item.IsShortcut)
+            App.Logger.Info("IF ShortcutItem");
+
+            if (Item.IsShortcut)
 			{
 				ViewModel.ItemCreatedTimestamp = Item.ItemDateCreated;
 				ViewModel.ItemAccessedTimestamp = Item.ItemDateAccessed;
 				ViewModel.LoadLinkIcon = Item.LoadWebShortcutGlyph;
                 ViewModel.IsRunAsAdmin = ((ShortcutItem)Item).RunAsAdmin;
+                App.Logger.Warn($"ShortcutItem: {Item.ItemDateCreated} {Item.ItemDateAccessed} {Item.LoadWebShortcutGlyph} {((ShortcutItem)Item).RunAsAdmin}");
                 if (Item.IsLinkItem || string.IsNullOrWhiteSpace(((ShortcutItem)Item).TargetPath))
 				{
 					// Can't show any other property
-					//return;
+					return;
 				}
 			}
 
@@ -319,11 +323,13 @@ namespace Files.App.ViewModels.Properties
 				case "ShortcutItemPath":
 				case "ShortcutItemWorkingDir":
 				case "ShortcutItemArguments":
-					if (string.IsNullOrWhiteSpace(ViewModel.ShortcutItemPath))
+                    App.Logger.Warn($"Property changed, updating link {Item.ItemPath} with attributes: RunAsAdmin: {ViewModel.IsRunAsAdmin}, Path: {ViewModel.ShortcutItemPath}, WorkingDir:{ViewModel.ShortcutItemWorkingDir}, Arguments: {ViewModel.ShortcutItemArguments}.");
+                    App.Logger.Warn($"ListedItem date modified: {Item.ItemDateModified}, ListedItem size: {Item.FileSize}");
+                    if (string.IsNullOrWhiteSpace(ViewModel.ShortcutItemPath))
 						return;
-
+					                  
                     await FileOperationsHelpers.CreateOrUpdateLinkAsync(Item.ItemPath, ViewModel.ShortcutItemPath, ViewModel.ShortcutItemArguments, ViewModel.ShortcutItemWorkingDir, ViewModel.IsRunAsAdmin);
-					break;
+                    break;
             }
         }
     }

@@ -104,24 +104,30 @@ namespace Files.App.Views
                     await App.Window.DispatcherQueue.EnqueueAsync(() =>
 						UIFilesystemHelpers.SetHiddenAttributeItem(item, ViewModel.IsHidden, itemMM)
 					);
+                }
 
-					// Handles run as administrator for shortcuts
-					if (FileExtensionHelpers.IsShortcutFile(item.ItemPath))
-					{
-						var shortcutItem = (ShortcutItem)item;
+                App.Logger.Warn($"Trying to save properties for item: {item.ItemPath}");
 
-						var isApplication = !string.IsNullOrWhiteSpace(shortcutItem.TargetPath) &&
-							(shortcutItem.TargetPath.EndsWith(".exe", StringComparison.OrdinalIgnoreCase)
-								|| shortcutItem.TargetPath.EndsWith(".msi", StringComparison.OrdinalIgnoreCase)
-								|| shortcutItem.TargetPath.EndsWith(".bat", StringComparison.OrdinalIgnoreCase));
+                // Handles run as administrator for shortcuts
+                if (item.IsShortcut)
+                {
+                    var shortcutItem = (ShortcutItem)item;
 
-						if (!isApplication)
-							goto rename;
+					App.Logger.Warn("Is a shortcut file");
 
-						await App.Window.DispatcherQueue.EnqueueAsync(() =>
-							UIFilesystemHelpers.SetShortcutIsRunAsAdmin(shortcutItem, ViewModel.IsRunAsAdmin, AppInstance)
-						);   
-                    }
+                    var isApplication = !string.IsNullOrWhiteSpace(shortcutItem.TargetPath) &&
+                        (shortcutItem.TargetPath.EndsWith(".exe", StringComparison.OrdinalIgnoreCase)
+                            || shortcutItem.TargetPath.EndsWith(".msi", StringComparison.OrdinalIgnoreCase)
+                            || shortcutItem.TargetPath.EndsWith(".bat", StringComparison.OrdinalIgnoreCase));
+
+                    if (!isApplication)
+                        goto rename;
+
+                    App.Logger.Warn("About to set admin property");
+
+                    await App.Window.DispatcherQueue.EnqueueAsync(() =>
+                        UIFilesystemHelpers.SetShortcutIsRunAsAdmin(shortcutItem, ViewModel.IsRunAsAdmin, AppInstance)
+                    );
                 }
 
 				rename:

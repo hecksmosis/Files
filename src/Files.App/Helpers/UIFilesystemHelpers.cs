@@ -347,7 +347,7 @@ namespace Files.App.Helpers
 		{
 			try
 			{
-				var items = associatedInstance.SlimContentPage.SelectedItems.ToList().Select((item) => StorageHelpers.FromPathAndType(
+				var items = associatedInstance.SlimContentPage.SelectedItems?.ToList().Select((item) => StorageHelpers.FromPathAndType(
 					item.ItemPath,
 					item.PrimaryItemAttribute == StorageItemTypes.File ? FilesystemItemType.File : FilesystemItemType.Directory));
 				var folder = await CreateFileFromDialogResultTypeForResult(AddItemDialogItemType.Folder, null, associatedInstance);
@@ -365,7 +365,7 @@ namespace Files.App.Helpers
 
         public static void RefreshItem(ListedItem item, IShellPage associatedInstance)
         {
-            associatedInstance.Refresh_Click();
+            associatedInstance.FilesystemViewModel?.RefreshItems(item.ItemPath);
         }
 
         /// <summary>
@@ -380,10 +380,12 @@ namespace Files.App.Helpers
 			itemManipulationModel.RefreshItemsOpacity();
 		}
 
-        public static async void SetShortcutIsRunAsAdmin(ShortcutItem item, bool isRunAsAdmin, IShellPage associatedInstance)
+        public static async Task SetShortcutIsRunAsAdmin(ShortcutItem item, bool isRunAsAdmin, IShellPage associatedInstance)
         {
             item.RunAsAdmin = isRunAsAdmin;
             await FileOperationsHelpers.CreateOrUpdateLinkAsync(item.ItemPath, item.TargetPath, item.Arguments, item.WorkingDirectory, item.RunAsAdmin);
+            App.Logger.Warn("Refreshing item");
+            RefreshItem(item, associatedInstance);
         }
     }
 }

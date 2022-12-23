@@ -192,8 +192,11 @@ namespace Files.App.Views
 
 		private async void OKButton_Click(object sender, RoutedEventArgs e)
 		{
+			App.Logger.Info("Ok button was clicked");
+
 			if (contentFrame.Content is PropertiesGeneral propertiesGeneral)
 			{
+				App.Logger.Warn($"Is PropertiesGeneral for item: {listedItem.ItemPath}");
 				await propertiesGeneral.SaveChangesAsync(listedItem);
 			}
 			else

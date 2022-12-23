@@ -584,7 +584,10 @@ namespace Files.App.Helpers
 					using var newLink = new ShellLink(targetPath, arguments, workingDirectory);
 					newLink.RunAsAdministrator = runAsAdmin;
 					newLink.SaveAs(linkSavePath); // Overwrite if exists
-					return Task.FromResult(true);
+                    // Get shellLinkItem
+                    ShellLinkItem newLinkItem = ShellFolderExtensions.GetShellLinkItem(newLink);
+                    App.Logger.Warn($"newLink properties: {newLinkItem}");
+                    return Task.FromResult(true);
 				}
 				else if (linkSavePath.EndsWith(".url", StringComparison.Ordinal))
 				{
