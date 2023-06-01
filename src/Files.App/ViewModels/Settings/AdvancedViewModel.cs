@@ -29,6 +29,9 @@ namespace Files.App.ViewModels.Settings
 		public ICommand ExportSettingsCommand { get; }
 		public ICommand ImportSettingsCommand { get; }
 		public ICommand OpenSettingsJsonCommand { get; }
+		public ICommand ChangePageCommand { get; }
+		public ICommand RemovePageCommand { get; }
+		public ICommand AddPageCommand { get; }
 
 		public AdvancedViewModel()
 		{
@@ -40,6 +43,9 @@ namespace Files.App.ViewModels.Settings
 			ExportSettingsCommand = new AsyncRelayCommand(ExportSettings);
 			ImportSettingsCommand = new AsyncRelayCommand(ImportSettings);
 			OpenSettingsJsonCommand = new AsyncRelayCommand(OpenSettingsJson);
+			ChangePageCommand = new AsyncRelayCommand(ChangePage);
+			RemovePageCommand = new RelayCommand(RemovePage);
+			AddPageCommand = new RelayCommand<string>(async (path) => await AddPage(path));
 		}
 
 		private async Task OpenSettingsJson()
@@ -147,6 +153,22 @@ namespace Files.App.ViewModels.Settings
 		DetectResult:
 			IsSetAsOpenFileDialog = DetectIsSetAsOpenFileDialog();
 		}
+
+		private async Task ChangePage()
+		{
+			
+		}
+
+		private void RemovePage()
+		{
+			
+		}
+
+		private async Task AddPage(string path = null)
+		{
+			
+		}
+
 
 		private async Task ImportSettings()
 		{

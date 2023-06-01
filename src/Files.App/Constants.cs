@@ -57,6 +57,7 @@ namespace Files.App
 			public const string FavoritesIcon = "ms-appx:///Assets/FluentIcons/Favorites.png";
 			public const string FileTagsIcon = "ms-appx:///Assets/FluentIcons/FileTags.png";
 			public const string HomeIcon = "ms-appx:///Assets/FluentIcons/Home.png";
+			public const string GitRepositoriesIcon = "ms-appx:///Assets/FluentIcons/Home.png";
 		}
 
 		public static class WslIconsPaths
@@ -162,6 +163,8 @@ namespace Files.App
 			public const string UserSettingsFileName = "user_settings.json";
 
 			public const string FileTagSettingsFileName = "filetags.json";
+
+			public const string GitRepositoriesFileName = "git_repositories.json";
 		}
 
 		public static class PreviewPane

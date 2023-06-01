@@ -186,6 +186,12 @@ namespace Files.App.ServicesImplementation.Settings
 			set => Set(value);
 		}
 
+		public bool ShowGitRepositoriesSection
+		{
+			get => Get(true);
+			set => Set(value);
+		}
+
 		public bool MoveShellExtensionsToSubMenu
 		{
 			get => Get(true);
@@ -258,6 +264,7 @@ namespace Files.App.ServicesImplementation.Settings
 				case nameof(ShowNetworkDrivesSection):
 				case nameof(ShowWslSection):
 				case nameof(ShowFileTagsSection):
+				case nameof(ShowGitRepositoriesSection):
 				case nameof(MoveShellExtensionsToSubMenu):
 				case nameof(ShowEditTagsMenu):
 				case nameof(ShowOpenInNewTab):

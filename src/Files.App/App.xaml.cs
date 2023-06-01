@@ -68,6 +68,7 @@ namespace Files.App
 		public static WSLDistroManager WSLDistroManager { get; private set; }
 		public static LibraryManager LibraryManager { get; private set; }
 		public static FileTagsManager FileTagsManager { get; private set; }
+		public static GitRepositoriesManager GitRepositoriesManager { get; private set; }
 
 		public static ILogger Logger { get; private set; }
 		public static SecondaryTileHelper SecondaryTileHelper { get; private set; } = new SecondaryTileHelper();
@@ -98,6 +99,7 @@ namespace Files.App
 			WSLDistroManager ??= new WSLDistroManager();
 			FileTagsManager ??= new FileTagsManager();
 			QuickAccessManager ??= new QuickAccessManager();
+			GitRepositoriesManager ??= new GitRepositoriesManager();
 		}
 
 		private static Task StartAppCenter()

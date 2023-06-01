@@ -343,6 +343,9 @@ namespace Files.App.UserControls
 				case SectionType.FileTag:
 					userSettingsService.GeneralSettingsService.ShowFileTagsSection = false;
 					break;
+				case SectionType.GitRepositories:
+					userSettingsService.GeneralSettingsService.ShowGitRepositoriesSection = false;
+					break;
 			}
 		}
 
@@ -350,7 +353,7 @@ namespace Files.App.UserControls
 		{
 			var dialog = new ReorderSidebarItemsDialogViewModel();
 			var dialogService = Ioc.Default.GetRequiredService<IDialogService>();
-			var result = await dialogService.ShowDialogAsync(dialog);
+			_ = await dialogService.ShowDialogAsync(dialog);
 		}
 
 		private async Task OpenInNewPane()
@@ -518,7 +521,7 @@ namespace Files.App.UserControls
 					return;
 
 				dragOverSectionTimer.Stop();
-				if ((dragOverSection as NavigationViewItem)?.DataContext is LocationItem section)
+				if (dragOverSection is NavigationViewItem { DataContext: LocationItem section })
 					section.IsExpanded = true;
 
 				dragOverSection = null;

@@ -19,7 +19,7 @@ namespace Files.App.Helpers
 		public static string? GetGitRepositoryPath(string? path, string root)
 		{
 			if (root.EndsWith('\\'))
-				root = root.Substring(0, root.Length - 1);
+				root = root[..^1];
 
 			if (
 				string.IsNullOrWhiteSpace(path) ||

@@ -37,6 +37,10 @@
 				x:Name="SidebarContextMenuFileTagsSection"
 				IsChecked="{x:Bind ViewModel.ShowFileTagsSection, Mode=TwoWay}"
 				Text="{helpers:ResourceString Name=FileTags}" />
+			<ToggleMenuFlyoutItem
+				x:Name="SidebarContextMenuGitRepositoriesSection"
+				IsChecked="{x:Bind ViewModel.ShowGitRepositoriesSection, Mode=TwoWay}"
+				Text="{helpers:ResourceString Name=GitRepositories}" />
 		</MenuFlyout>
 	</FlyoutBase.AttachedFlyout>
 	<NavigationView.Resources>

@@ -110,6 +110,66 @@
 				</ToggleSwitch>
 			</local:SettingsBlockControl>
 
+			<local:SettingsBlockControl
+				x:Name="ChooseGitRepositoryLocations"
+				Title="{helpers:ResourceString Name=SettingsSetAsDefaultFileManager}"
+				HorizontalAlignment="Stretch"
+				Description="{helpers:ResourceString Name=SettingsSetAsDefaultFileManagerDescription}"
+				IsExpanded="True">
+				<Grid HorizontalAlignment="Stretch">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="*" />
+						<ColumnDefinition Width="Auto" />
+					</Grid.ColumnDefinitions>
+					<Grid.RowDefinitions>
+						<RowDefinition />
+						<RowDefinition />
+					</Grid.RowDefinitions>
+					<TextBlock
+						HorizontalAlignment="Left"
+						VerticalAlignment="Center"
+						FontSize="16"
+						Text="{helpers:ResourceString Name=SettingsOnStartupPages/Text}" />
+					<CommandBar
+						Grid.Column="1"
+						Background="Transparent"
+						DefaultLabelPosition="Right"
+						IsOpen="False">
+						<AppBarButton Icon="Add" Label="{helpers:ResourceString Name=Add}">
+							<AppBarButton.Flyout />
+						</AppBarButton>
+						<AppBarButton
+							Command="{x:Bind ViewModel.ChangePageCommand}"
+							Icon="Edit"
+							Label="{helpers:ResourceString Name=Edit}" />
+						<AppBarButton
+							Command="{x:Bind ViewModel.RemovePageCommand}"
+							Icon="Delete"
+							Label="{helpers:ResourceString Name=Remove}" />
+					</CommandBar>
+
+					<ListView
+						x:Name="PagesList"
+						Grid.Row="1"
+						Grid.ColumnSpan="2"
+						Margin="0,10"
+						HorizontalAlignment="Stretch"
+						AllowDrop="True"
+						CanReorderItems="True"
+						IsItemClickEnabled="True"
+						SelectionMode="Single">
+						<ListView.ItemTemplate>
+							<DataTemplate xmlns:vm="using:Files.App.ViewModels.Settings" x:DataType="vm:PageOnStartupViewModel">
+								<TextBlock
+									Text="{x:Bind Text}"
+									TextTrimming="CharacterEllipsis"
+									ToolTipService.ToolTip="{x:Bind Text}" />
+							</DataTemplate>
+						</ListView.ItemTemplate>
+					</ListView>
+				</Grid>
+			</local:SettingsBlockControl>
+
 			<!--  Replace Open File Dialog  -->
 			<local:SettingsBlockControl
 				x:Name="ReplaceOpenFileDialogSetting"

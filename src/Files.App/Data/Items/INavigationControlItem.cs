@@ -36,7 +36,8 @@ namespace Files.App.Data.Items
 		CloudDrives,
 		Network,
 		WSL,
-		FileTag
+		FileTag,
+		GitRepositories
 	}
 
 	public class ContextMenuOptions

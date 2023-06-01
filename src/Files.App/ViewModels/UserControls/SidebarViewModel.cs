@@ -55,12 +55,13 @@ namespace Files.App.ViewModels.UserControls
 			{
 				SectionType.Home,
 				SectionType.Favorites,
+				SectionType.GitRepositories,
 				SectionType.Library,
 				SectionType.Drives,
 				SectionType.CloudDrives,
 				SectionType.Network,
 				SectionType.WSL,
-				SectionType.FileTag
+				SectionType.FileTag,
 			};
 
 		public bool IsSidebarCompactSize
@@ -80,7 +81,7 @@ namespace Files.App.ViewModels.UserControls
 			INavigationControlItem? item = null;
 			var sidebarItems = SideBarItems
 				.Where(x => !string.IsNullOrWhiteSpace(x.Path))
-				.Concat(SideBarItems.Where(x => (x as LocationItem)?.ChildItems is not null).SelectMany(x => ((LocationItem)x).ChildItems).Where(x => !string.IsNullOrWhiteSpace(x.Path)))
+				.Concat(SideBarItems.Where(x => x is LocationItem { ChildItems: not null }).SelectMany(x => ((LocationItem)x).ChildItems).Where(x => !string.IsNullOrWhiteSpace(x.Path)))
 				.ToList();
 
 			if (string.IsNullOrEmpty(value))
@@ -200,6 +201,18 @@ namespace Files.App.ViewModels.UserControls
 			}
 		}
 
+		public bool ShowGitRepositoriesSection
+		{
+			get => UserSettingsService.GeneralSettingsService.ShowGitRepositoriesSection;
+			set
+			{
+				if (value == UserSettingsService.GeneralSettingsService.ShowGitRepositoriesSection)
+					return;
+
+				UserSettingsService.GeneralSettingsService.ShowGitRepositoriesSection = value;
+			}
+		}
+
 		private INavigationControlItem selectedSidebarItem;
 
 		public INavigationControlItem SidebarSelectedItem
@@ -223,6 +236,7 @@ namespace Files.App.ViewModels.UserControls
 			Manager_DataChanged(SectionType.Network, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
 			Manager_DataChanged(SectionType.WSL, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
 			Manager_DataChanged(SectionType.FileTag, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+			Manager_DataChanged(SectionType.GitRepositories, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
 
 			App.QuickAccessManager.Model.DataChanged += Manager_DataChanged;
 			App.LibraryManager.DataChanged += Manager_DataChanged;
@@ -253,6 +267,7 @@ namespace Files.App.ViewModels.UserControls
 					SectionType.WSL => App.WSLDistroManager.Distros,
 					SectionType.Library => App.LibraryManager.Libraries,
 					SectionType.FileTag => App.FileTagsManager.FileTags,
+					SectionType.GitRepositories => App.GitRepositoriesManager.GitRepositories,
 					_ => null
 				};
 				await SyncSidebarItems(section, getElements, e);
@@ -491,6 +506,19 @@ namespace Files.App.ViewModels.UserControls
 
 						break;
 					}
+
+				case SectionType.GitRepositories:
+					{
+						if (!ShowGitRepositoriesSection)
+						{
+							break;
+						}
+						section = BuildSection("GitRepositories".GetLocalizedResource(), sectionType, new ContextMenuOptions { ShowHideSection = true }, false);
+						icon = new BitmapImage(new Uri(Constants.FluentIconsPaths.GitRepositoriesIcon));
+						section.IsHeader = true;
+
+						break;
+					}
 			}
 
 			if (section is not null)
@@ -594,6 +622,10 @@ namespace Files.App.ViewModels.UserControls
 				case nameof(UserSettingsService.GeneralSettingsService.ShowFileTagsSection):
 					UpdateSectionVisibility(SectionType.FileTag, ShowFileTagsSection);
 					OnPropertyChanged(nameof(ShowFileTagsSection));
+					break;
+				case nameof(UserSettingsService.GeneralSettingsService.ShowGitRepositoriesSection):
+					UpdateSectionVisibility(SectionType.GitRepositories, ShowGitRepositoriesSection);
+					OnPropertyChanged(nameof(ShowGitRepositoriesSection));
 					break;
 			}
 		}

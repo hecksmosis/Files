@@ -150,6 +150,11 @@ namespace Files.Backend.Services.Settings
 		bool ShowFileTagsSection { get; set; }
 
 		/// <summary>
+		/// Gets or sets a value indicating if the Git Repositories section should be visible.
+		/// </summary>
+		bool ShowGitRepositoriesSection { get; set; }
+
+		/// <summary>
 		/// Gets or sets a value indicating whether or not to move shell extensions into a sub menu.
 		/// </summary>
 		bool MoveShellExtensionsToSubMenu { get; set; }
